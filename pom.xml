@@ -6,7 +6,7 @@
 
     <groupId>net.woolgens</groupId>
     <artifactId>core-plugin</artifactId>
-    <version>1.0</version>
+    <version>1.0.0</version>
 
     <properties>
         <maven.compiler.source>16</maven.compiler.source>
@@ -36,6 +36,18 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12.2</version>
+                <configuration>
+                    <classpathDependencyExcludes>
+                        <classpathDependencyExclude>net.md-5:bungeecord-api</classpathDependencyExclude>
+                        <classpathDependencyExclude>org.spigotmc:spigot</classpathDependencyExclude>
+                        <classpathDependencyExclude>org.bukkit:craftbukkit</classpathDependencyExclude>
+                    </classpathDependencyExcludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -18,5 +18,6 @@ steps:
         from_secret: MAVEN_SERVER_SECRETS
   - name: testing
     image: maven
+    depends_on: [settings]
     commands:
-      - mvn test
+      - mvn -U test -s settings.xml
