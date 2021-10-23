@@ -17,7 +17,7 @@ steps:
       serverSecrets:
         from_secret: MAVEN_SERVER_SECRETS
   - name: buildtools
-    image: maven:3-alpine
+    image: maven:3.8.3-adoptopenjdk-16-alpine
     commands:
       - mkdir buildtools
       - cd buildtools
