@@ -17,7 +17,7 @@ steps:
       serverSecrets:
         from_secret: MAVEN_SERVER_SECRETS
   - name: buildtools
-    image: maven:3-alpine
+    image: git-maven:3-alpine
     commands:
       - mkdir buildtools
       - cd buildtools
