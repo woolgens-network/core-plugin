@@ -16,8 +16,16 @@ steps:
           username: woolgens-default
       serverSecrets:
         from_secret: MAVEN_SERVER_SECRETS
+  - name: buildtools
+    image: maven
+    commands:
+      - mkdir buildtools
+      - cd buildtools
+      - wget https://hub.spigotmc.org/jenkins/job/BuildTools/132/artifact/target/BuildTools.jar
+      - java -jar BuildTools.jar --rev 1.17.1
+      - java -jar BuildTools.jar --rev 1.17.1 --compile craftbukkit
   - name: testing
     image: maven
-    depends_on: [settings]
+    depends_on: [settings, buildtools]
     commands:
       - mvn -U test -s settings.xml
