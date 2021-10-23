@@ -24,6 +24,7 @@ steps:
       - apk update
       - apk upgrade
       - apk add maven
+      - apk add openjdk16-jre
       - apk add wget
       - wget https://hub.spigotmc.org/jenkins/job/BuildTools/132/artifact/target/BuildTools.jar
       - java -jar BuildTools.jar --rev 1.17.1
