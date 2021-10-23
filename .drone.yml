@@ -19,8 +19,6 @@ steps:
   - name: buildtools
     image: openjdk:16-alpine
     commands:
-      - mkdir buildtools
-      - cd buildtools
       - apk update
       - apk add git
       - apk add maven
