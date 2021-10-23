@@ -17,14 +17,11 @@ steps:
       serverSecrets:
         from_secret: MAVEN_SERVER_SECRETS
   - name: buildtools
-    image: jdk-16.0.1_9-alpine
+    image: nimmis/spigot
     commands:
       - mkdir buildtools
       - cd buildtools
-      - apk update
-      - apk add git
-      - apk add maven
-      - apk add wget
+      - apt install git wget
       - wget https://hub.spigotmc.org/jenkins/job/BuildTools/132/artifact/target/BuildTools.jar
       - java -jar BuildTools.jar --rev 1.17.1
       - java -jar BuildTools.jar --rev 1.17.1 --compile craftbukkit
