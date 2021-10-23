@@ -8,6 +8,14 @@ trigger:
     - master
 
 steps:
+  - name: settings
+    image: md5lukas/drone-mvn-settings
+    settings:
+      servers:
+        - id: woolgens-network
+          username: woolgens-default
+      serverSecrets:
+        from_secret: MAVEN_SERVER_SECRETS
   - name: testing
     image: maven
     commands:
