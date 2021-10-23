@@ -21,4 +21,4 @@ steps:
     depends_on: [settings]
     commands:
       - ls
-      - mvn test -s settings.xml
+      - mvn -U test -s settings.xml
