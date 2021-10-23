@@ -1,0 +1,14 @@
+---
+kind: pipeline
+type: docker
+name: Java Maven Test
+
+trigger:
+  branch:
+    - master
+
+steps:
+  - name: testing
+    image: maven
+    commands:
+      - mvn test
