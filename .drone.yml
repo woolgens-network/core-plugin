@@ -22,6 +22,7 @@ steps:
       - mkdir buildtools
       - cd buildtools
       - apk update
+      - apk upgrade
       - apk add maven
       - apk add openjdk16
       - apk add wget
