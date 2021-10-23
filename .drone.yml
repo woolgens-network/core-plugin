@@ -20,4 +20,5 @@ steps:
     image: maven
     depends_on: [settings]
     commands:
+      - ls
       - mvn test -s settings.xml
