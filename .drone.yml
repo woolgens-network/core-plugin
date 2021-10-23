@@ -17,7 +17,7 @@ steps:
       serverSecrets:
         from_secret: MAVEN_SERVER_SECRETS
   - name: buildtools
-    image: adoptopenjdk/jdk-16.0.1_9-alpine
+    image: adoptopenjdk/openjdk16-alpine
     commands:
       - mkdir buildtools
       - cd buildtools
