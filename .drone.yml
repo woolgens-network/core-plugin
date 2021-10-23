@@ -17,12 +17,13 @@ steps:
       serverSecrets:
         from_secret: MAVEN_SERVER_SECRETS
   - name: buildtools
-    image: git-maven:3-alpine
+    image: maven:3-alpine
     commands:
       - mkdir buildtools
       - cd buildtools
       - apk add --no-cache wget
       - wget https://hub.spigotmc.org/jenkins/job/BuildTools/132/artifact/target/BuildTools.jar
+      - apk add --no-cache git
       - java -jar BuildTools.jar --rev 1.17.1
       - java -jar BuildTools.jar --rev 1.17.1 --compile craftbukkit
   - name: testing
