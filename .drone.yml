@@ -21,7 +21,7 @@ steps:
     commands:
       - mkdir buildtools
       - cd buildtools
-      - wget https://hub.spigotmc.org/jenkins/job/BuildTools/132/artifact/target/BuildTools.jar
+      - curl https://hub.spigotmc.org/jenkins/job/BuildTools/132/artifact/target/BuildTools.jar
       - java -jar BuildTools.jar --rev 1.17.1
       - java -jar BuildTools.jar --rev 1.17.1 --compile craftbukkit
   - name: testing
