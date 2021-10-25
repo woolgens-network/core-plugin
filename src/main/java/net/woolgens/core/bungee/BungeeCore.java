@@ -5,6 +5,8 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.woolgens.core.root.CoreRootBootstrap;
 import net.woolgens.core.root.ServerScope;
 
+import java.io.File;
+
 /**
  * Copyright (c) Maga, All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
@@ -30,7 +32,8 @@ public class BungeeCore extends Plugin {
     }
 
     private void initialize() {
-        this.root = new CoreRootBootstrap(ServerScope.BUNGEE);
+        this.root = new CoreRootBootstrap(ServerScope.BUNGEE, "plugins" + File.separator + getDescription().getName() +
+                File.separator);
 
         setup();
     }
