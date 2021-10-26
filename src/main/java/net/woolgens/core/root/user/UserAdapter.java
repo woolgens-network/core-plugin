@@ -6,13 +6,11 @@ import net.woolgens.api.WoolgensApi;
 import net.woolgens.api.user.User;
 import net.woolgens.api.user.UserProvider;
 import net.woolgens.api.user.data.UserData;
-import net.woolgens.core.root.CoreRootBootstrap;
 import net.woolgens.library.common.http.HttpRequestFailedException;
 import net.woolgens.library.common.http.HttpRequester;
-import net.woolgens.library.common.queue.QueueOperationTask;
+import net.woolgens.library.common.http.HttpResponse;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 
 /**
  * Copyright (c) Maga, All Rights Reserved
@@ -31,9 +29,12 @@ public class UserAdapter implements User {
         UserProviderAdapter provider = WoolgensApi.getProvider(UserProvider.class);
         HttpRequester requester = provider.getBootstrap().getRequester();
         try {
-            requester.put(provider.getUrl() + "/" + data.getUuid(), UserData.class, data);
+            HttpResponse<UserData> response = requester.put(provider.getUrl() + "/" + data.getUuid(), UserData.class, data);
+            if(!response.isSuccess()) {
+                provider.getLogger().warning("Can't save user: " + data.getUuid() + " status-code: " + response.getStatus());
+            }
         }catch (HttpRequestFailedException exception) {
-            provider.getLogger().severe("Can't save user: " + data.getUuid());
+            provider.sendUserServiceDownLog(exception);
         }
         return this;
     }
@@ -42,7 +43,7 @@ public class UserAdapter implements User {
     public CompletableFuture<User> saveAsync(boolean queue) {
         UserProviderAdapter provider = WoolgensApi.getProvider(UserProvider.class);
         if(!queue) {
-            return CompletableFuture.supplyAsync(() -> null, provider.getPool().getThreadPool());
+            return CompletableFuture.supplyAsync(() -> save(), provider.getPool().getThreadPool());
         }
         CompletableFuture<User> future = new CompletableFuture<>();
         provider.getPool().addTask(data.getUuid(), 1000 * 10, () -> future.complete(save()));

@@ -6,6 +6,7 @@ import net.woolgens.api.user.data.UserData;
 import net.woolgens.core.root.CoreRootBootstrap;
 import net.woolgens.library.common.http.HttpRequestFailedException;
 import net.woolgens.library.common.http.HttpRequester;
+import net.woolgens.library.common.http.HttpResponse;
 import net.woolgens.library.common.logger.WrappedLogger;
 import net.woolgens.library.common.logger.adapter.NamedLoggerAdapter;
 import net.woolgens.library.common.queue.QueueOperation;
@@ -43,6 +44,10 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
         this.users = new ConcurrentHashMap<>();
     }
 
+    public void sendUserServiceDownLog(Exception exception) {
+        logger.severe("User service endpoint is down: " + exception.getMessage());
+    }
+
     @Override
     public UserAdapter register(UUID uuid) {
         UserData data = new UserData();
@@ -50,9 +55,13 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
 
         HttpRequester requester = bootstrap.getRequester();
         try {
-            requester.post(getUrl(), UserData.class, data);
+            HttpResponse<UserData> response = requester.post(getUrl(), UserData.class, data);
+            if(!response.isSuccess()) {
+                logger.warning("Can't register user: " + data.getUuid() + " status-code: " + response.getStatus());
+                return null;
+            }
         }catch (HttpRequestFailedException exception) {
-            logger.severe("User service request failed (register): " + exception.getMessage());
+           sendUserServiceDownLog(exception);
         }
         return new UserAdapter(data);
     }
@@ -70,10 +79,15 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
         HttpRequester requester = bootstrap.getRequester();
         UserAdapter adapter;
         try {
-            UserData data = requester.get(getUrl() + "/" + uuid.toString(), UserData.class);
-            adapter = new UserAdapter(data);
+            HttpResponse<UserData> response = requester.get(getUrl() + "/" + uuid.toString(), UserData.class);
+            if(!response.isSuccess()) {
+                adapter = register(uuid);
+            } else {
+                adapter = new UserAdapter(response.getBody());
+            }
         } catch (HttpRequestFailedException exception) {
-            adapter = register(uuid);
+            sendUserServiceDownLog(exception);
+            return null;
         }
         users.put(uuid, adapter);
         return adapter;
@@ -109,8 +123,8 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
         }
         HttpRequester requester = bootstrap.getRequester();
         try {
-            requester.get(getUrl() + "/" + uuid.toString(), UserData.class);
-            return true;
+            HttpResponse<UserData> response = requester.get(getUrl() + "/" + uuid.toString(), UserData.class);
+            return response.isSuccess();
         }catch (HttpRequestFailedException exception) {}
         return false;
     }
