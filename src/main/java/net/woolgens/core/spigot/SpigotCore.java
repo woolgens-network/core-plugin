@@ -3,6 +3,8 @@ package net.woolgens.core.spigot;
 import lombok.Getter;
 import net.woolgens.core.root.CoreRootBootstrap;
 import net.woolgens.core.root.ServerScope;
+import net.woolgens.core.spigot.listener.PlayerLoginListener;
+import net.woolgens.core.spigot.listener.PlayerQuitListener;
 import net.woolgens.library.spigot.setup.SpigotSetup;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -47,6 +49,8 @@ public class SpigotCore extends JavaPlugin {
         /**
          * Listeners
          */
+        setup.addListener(new PlayerLoginListener());
+        setup.addListener(new PlayerQuitListener());
 
         setup.register();
     }
