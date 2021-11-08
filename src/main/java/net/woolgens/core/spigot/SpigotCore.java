@@ -61,9 +61,6 @@ public class SpigotCore extends JavaPlugin {
         /**
          * Commands
          */
-        setup.addCommand(new TestCommand(commandExceptionMapper));
-
-
 
         /**
          * Listeners
