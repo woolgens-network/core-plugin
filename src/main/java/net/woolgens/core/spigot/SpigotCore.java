@@ -3,6 +3,11 @@ package net.woolgens.core.spigot;
 import lombok.Getter;
 import net.woolgens.core.root.CoreRootBootstrap;
 import net.woolgens.core.root.ServerScope;
+import net.woolgens.core.spigot.listener.PlayerLoginListener;
+import net.woolgens.core.spigot.listener.PlayerQuitListener;
+import net.woolgens.library.spigot.command.exception.CommandExceptionMapper;
+import net.woolgens.library.spigot.command.exception.impl.NoPermissionException;
+import net.woolgens.library.spigot.command.exception.impl.SenderException;
 import net.woolgens.library.spigot.setup.SpigotSetup;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,6 +27,8 @@ public class SpigotCore extends JavaPlugin {
 
     private CoreRootBootstrap root;
 
+    private CommandExceptionMapper commandExceptionMapper;
+
     @Override
     public void onLoad() {
         instance = this;
@@ -35,7 +42,18 @@ public class SpigotCore extends JavaPlugin {
     private void initialize() {
         this.root = new CoreRootBootstrap(ServerScope.SPIGOT, "plugins" + File.separator + getDescription().getName() +
                 File.separator);
+        setupCommandExceptionMapper();
         setup();
+    }
+
+    private void setupCommandExceptionMapper() {
+        commandExceptionMapper = exception -> {
+            if(exception instanceof SenderException) {
+
+            } else if(exception instanceof NoPermissionException noPermissionException) {
+                noPermissionException.getSender().sendMessage("No perm");
+            }
+        };
     }
 
     private void setup() {
@@ -47,6 +65,8 @@ public class SpigotCore extends JavaPlugin {
         /**
          * Listeners
          */
+        setup.addListener(new PlayerLoginListener());
+        setup.addListener(new PlayerQuitListener());
 
         setup.register();
     }
