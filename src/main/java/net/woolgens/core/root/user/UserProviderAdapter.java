@@ -1,6 +1,7 @@
 package net.woolgens.core.root.user;
 
 import lombok.Getter;
+import net.woolgens.api.WoolgensApi;
 import net.woolgens.api.user.UserProvider;
 import net.woolgens.api.user.data.UserData;
 import net.woolgens.core.root.CoreRootBootstrap;
@@ -40,6 +41,31 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
         this.pool = new QueueOperationPool<>("User");
         this.logger = new NamedLoggerAdapter("User");
         this.users = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public UserAdapter save(UserAdapter user) {
+        HttpRequester requester = getBootstrap().getRequester();
+        try {
+            HttpResponse<UserData> response = requester.put(getUrl() + "/" + user.getData().getUuid(), UserData.class, user.getData());
+            if(!response.isSuccess()) {
+                getLogger().warning("Can't save user: " + user.getData().getUuid() + " status-code: " + response.getStatus());
+            }
+        }catch (HttpRequestFailedException exception) {
+            sendUserServiceDownLog(exception);
+        }
+        return user;
+    }
+
+    @Override
+    public CompletableFuture<UserAdapter> saveAsync(UserAdapter user, boolean queue) {
+        UserProviderAdapter provider = WoolgensApi.getProvider(UserProvider.class);
+        if(!queue) {
+            return CompletableFuture.supplyAsync(() -> save(user), provider.getPool().getThreadPool());
+        }
+        CompletableFuture<UserAdapter> future = new CompletableFuture<>();
+        provider.getPool().addTask(user.getData().getUuid(), 1000 * 10, () -> future.complete(save(user)));
+        return future;
     }
 
     public void sendUserServiceDownLog(Exception exception) {

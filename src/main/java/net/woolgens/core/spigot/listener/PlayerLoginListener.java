@@ -22,11 +22,6 @@ public class PlayerLoginListener implements Listener {
     public void onCall(PlayerLoginEvent event) {
         Player player = event.getPlayer();
         UserProvider<User> provider = WoolgensApi.getProvider(UserProvider.class);
-        provider.loadAsync(player.getUniqueId()).thenAccept(new Consumer<User>() {
-            @Override
-            public void accept(User user) {
-                player.sendMessage("Loaded");
-            }
-        });
+        provider.loadAsync(player.getUniqueId()).thenAccept(user -> player.sendMessage("Loaded"));
     }
 }
