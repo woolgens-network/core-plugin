@@ -3,8 +3,11 @@ package net.woolgens.core.root;
 import lombok.Getter;
 import net.woolgens.api.WoolgensApi;
 import net.woolgens.api.user.UserProvider;
+import net.woolgens.api.vault.VaultProvider;
 import net.woolgens.core.root.config.ConfigFacade;
+import net.woolgens.core.root.http.RootExceptionMapper;
 import net.woolgens.core.root.user.UserProviderAdapter;
+import net.woolgens.core.root.vault.HashiCorpVaultAdapter;
 import net.woolgens.library.common.http.HttpRequester;
 import net.woolgens.library.common.http.OkHttpRequester;
 import net.woolgens.library.common.logger.WrappedLogger;
@@ -27,6 +30,7 @@ public class CoreRootBootstrap {
     private ConfigFacade configuration;
     private HttpRequester requester;
     private UserProviderAdapter userProvider;
+    private HashiCorpVaultAdapter vaultProvider;
 
     public CoreRootBootstrap(ServerScope scope, String defaultDirectory) {
         bootstrap = this;
@@ -35,11 +39,14 @@ public class CoreRootBootstrap {
         this.logger = new DefaultLoggerAdapter();
         this.configuration = new ConfigFacade(defaultDirectory);
         this.requester = new OkHttpRequester(configuration.getGateway().getUrl());
+        this.requester.setMapper(new RootExceptionMapper(this));
         registerProviders();
     }
 
     private void registerProviders() {
         WoolgensApi.registerProvider(UserProvider.class, userProvider = new UserProviderAdapter(this));
+        WoolgensApi.registerProvider(VaultProvider.class, vaultProvider = new HashiCorpVaultAdapter(this));
+
     }
 
 

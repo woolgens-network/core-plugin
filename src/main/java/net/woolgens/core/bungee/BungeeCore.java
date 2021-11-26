@@ -34,7 +34,6 @@ public class BungeeCore extends Plugin {
     private void initialize() {
         this.root = new CoreRootBootstrap(ServerScope.BUNGEE, "plugins" + File.separator + getDescription().getName() +
                 File.separator);
-
         setup();
     }
 

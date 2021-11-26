@@ -17,12 +17,14 @@ public class ConfigFacade {
     private final String configDirectory;
 
     private GatewayConfig gateway;
+    private VaultConfig vault;
 
     public ConfigFacade(String defaultDirectory) {
         this.defaultDirectory = defaultDirectory;
         this.configDirectory = defaultDirectory + "config" + File.separator;
 
         this.gateway = new GatewayConfig(configDirectory);
+        this.vault = new VaultConfig(configDirectory);
     }
 
 }
