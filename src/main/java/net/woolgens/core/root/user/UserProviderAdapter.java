@@ -5,7 +5,6 @@ import net.woolgens.api.WoolgensApi;
 import net.woolgens.api.user.UserProvider;
 import net.woolgens.api.user.data.UserData;
 import net.woolgens.core.root.CoreRootBootstrap;
-import net.woolgens.library.common.http.HttpRequestFailedException;
 import net.woolgens.library.common.http.HttpRequester;
 import net.woolgens.library.common.http.HttpResponse;
 import net.woolgens.library.common.logger.WrappedLogger;
@@ -31,7 +30,6 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
     private final CoreRootBootstrap bootstrap;
     private WrappedLogger logger;
     private QueueOperationPool<QueueOperation> pool;
-
     private Map<UUID, UserAdapter> users;
 
 
@@ -46,13 +44,10 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
     @Override
     public UserAdapter save(UserAdapter user) {
         HttpRequester requester = getBootstrap().getRequester();
-        try {
-            HttpResponse<UserData> response = requester.put(getUrl() + "/" + user.getData().getUuid(), UserData.class, user.getData());
-            if(!response.isSuccess()) {
-                getLogger().warning("Can't save user: " + user.getData().getUuid() + " status-code: " + response.getStatus());
-            }
-        }catch (HttpRequestFailedException exception) {
-            sendUserServiceDownLog(exception);
+        HttpResponse<UserData> response = requester.put(getUrl() + "/" + user.getData().getUuid(), UserData.class, user.getData());
+        if(!response.isSuccess()) {
+            getLogger().warning("Can't save user: " + user.getData().getUuid() + " status-code: " + response.getStatus());
+            return null;
         }
         return user;
     }
@@ -68,24 +63,15 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
         return future;
     }
 
-    public void sendUserServiceDownLog(Exception exception) {
-        logger.severe("User service endpoint is down: " + exception.getMessage());
-    }
-
     @Override
     public UserAdapter register(UUID uuid) {
         UserData data = new UserData();
         data.setUuid(uuid.toString());
-
         HttpRequester requester = bootstrap.getRequester();
-        try {
-            HttpResponse<UserData> response = requester.post(getUrl(), UserData.class, data);
-            if(!response.isSuccess()) {
-                logger.warning("Can't register user: " + data.getUuid() + " status-code: " + response.getStatus());
-                return null;
-            }
-        }catch (HttpRequestFailedException exception) {
-           sendUserServiceDownLog(exception);
+        HttpResponse<UserData> response = requester.post(getUrl(), UserData.class, data);
+        if(!response.isSuccess()) {
+            logger.warning("Can't register user: " + data.getUuid() + " status-code: " + response.getStatus());
+            return null;
         }
         return new UserAdapter(data);
     }
@@ -102,16 +88,11 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
         }
         HttpRequester requester = bootstrap.getRequester();
         UserAdapter adapter;
-        try {
-            HttpResponse<UserData> response = requester.get(getUrl() + "/" + uuid.toString(), UserData.class);
-            if(!response.isSuccess()) {
-                adapter = register(uuid);
-            } else {
-                adapter = new UserAdapter(response.getBody());
-            }
-        } catch (HttpRequestFailedException exception) {
-            sendUserServiceDownLog(exception);
-            return null;
+        HttpResponse<UserData> response = requester.get(getUrl() + "/" + uuid.toString(), UserData.class);
+        if(!response.isSuccess()) {
+            adapter = register(uuid);
+        } else {
+            adapter = new UserAdapter(response.getBody());
         }
         users.put(uuid, adapter);
         return adapter;
@@ -146,11 +127,8 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
             return true;
         }
         HttpRequester requester = bootstrap.getRequester();
-        try {
-            HttpResponse<UserData> response = requester.get(getUrl() + "/" + uuid.toString(), UserData.class);
-            return response.isSuccess();
-        }catch (HttpRequestFailedException exception) {}
-        return false;
+        HttpResponse<UserData> response = requester.get(getUrl() + "/" + uuid.toString(), UserData.class);
+        return response.isSuccess();
     }
 
 }

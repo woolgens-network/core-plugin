@@ -1,6 +1,7 @@
 package net.woolgens.core.spigot;
 
 import lombok.Getter;
+import net.woolgens.api.WoolgensConstants;
 import net.woolgens.core.root.CoreRootBootstrap;
 import net.woolgens.core.root.ServerScope;
 import net.woolgens.core.spigot.listener.PlayerLoginListener;
@@ -51,7 +52,7 @@ public class SpigotCore extends JavaPlugin {
             if(exception instanceof SenderException) {
 
             } else if(exception instanceof NoPermissionException noPermissionException) {
-                noPermissionException.getSender().sendMessage("No perm");
+                noPermissionException.getSender().sendMessage(WoolgensConstants.PREFIX + "§cYou do not have enough permissions.");
             }
         };
     }
@@ -68,6 +69,7 @@ public class SpigotCore extends JavaPlugin {
         setup.addListener(new PlayerLoginListener());
         setup.addListener(new PlayerQuitListener());
 
+        //------------------------------------------------
         setup.register();
     }
 
