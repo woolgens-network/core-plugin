@@ -8,18 +8,18 @@ import net.woolgens.library.file.yaml.YamlConfig;
  * Proprietary and confidential
  * Written by Maga
  **/
-public class GatewayConfig extends YamlConfig {
+public class BackendConfig extends YamlConfig {
 
-    public GatewayConfig(String path) {
-        super(path, "gateway");
+    public BackendConfig(String path) {
+        super(path, "backend");
     }
 
     @Override
     public void writeDefaults() {
-        set("url", "http://127.0.0.1:1922/");
+        set("user", "http://127.0.0.1:8080/");
     }
 
-    public String getUrl() {
-        return getGeneric("url");
+    public String getUser() {
+        return getGeneric("user");
     }
 }

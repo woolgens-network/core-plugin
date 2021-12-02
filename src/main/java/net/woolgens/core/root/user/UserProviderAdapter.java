@@ -7,11 +7,14 @@ import net.woolgens.api.user.data.UserData;
 import net.woolgens.core.root.CoreRootBootstrap;
 import net.woolgens.library.common.http.HttpRequester;
 import net.woolgens.library.common.http.HttpResponse;
+import net.woolgens.library.common.http.OkHttpRequester;
+import net.woolgens.library.common.http.auth.HttpAuthenticator;
 import net.woolgens.library.common.logger.WrappedLogger;
 import net.woolgens.library.common.logger.adapter.NamedLoggerAdapter;
 import net.woolgens.library.common.queue.QueueOperation;
 import net.woolgens.library.common.queue.QueueOperationPool;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -31,11 +34,19 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
     private WrappedLogger logger;
     private QueueOperationPool<QueueOperation> pool;
     private Map<UUID, UserAdapter> users;
+    private HttpRequester requester;
 
 
     public UserProviderAdapter(CoreRootBootstrap bootstrap) {
         this.url = "users";
         this.bootstrap = bootstrap;
+
+        //--------------------------------------------------------
+        this.requester = new OkHttpRequester(bootstrap.getConfiguration().getBackend().getUser());
+        this.requester.setAuthenticator(new HttpAuthenticator("Authorization", bootstrap.getVaultProvider().getDefaultAccessToken()));
+        this.requester.setMapper(bootstrap.getDefaultExceptionMapper());
+        //--------------------------------------------------------
+
         this.pool = new QueueOperationPool<>("User");
         this.logger = new NamedLoggerAdapter("User");
         this.users = new ConcurrentHashMap<>();
@@ -43,8 +54,8 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
 
     @Override
     public UserAdapter save(UserAdapter user) {
-        HttpRequester requester = getBootstrap().getRequester();
-        HttpResponse<UserData> response = requester.put(getUrl() + "/" + user.getData().getUuid(), UserData.class, user.getData());
+        HttpRequester requester = getRequester();
+        HttpResponse<UserData> response = requester.post(getUrl(), UserData.class, user.getData());
         if(!response.isSuccess()) {
             getLogger().warning("Can't save user: " + user.getData().getUuid() + " status-code: " + response.getStatus());
             return null;
@@ -65,9 +76,17 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
 
     @Override
     public UserAdapter register(UUID uuid) {
+        //-----------------------------------------------------
         UserData data = new UserData();
         data.setUuid(uuid.toString());
-        HttpRequester requester = bootstrap.getRequester();
+        data.setName("");
+        data.setJoined(System.currentTimeMillis());
+        data.setStats(new HashMap<>());
+        data.setSettings(new HashMap<>());
+        data.setSeasons(new HashMap<>());
+        //-----------------------------------------------------
+
+        HttpRequester requester = getRequester();
         HttpResponse<UserData> response = requester.post(getUrl(), UserData.class, data);
         if(!response.isSuccess()) {
             logger.warning("Can't register user: " + data.getUuid() + " status-code: " + response.getStatus());
@@ -86,7 +105,7 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
         if(users.containsKey(uuid)) {
             return users.get(uuid);
         }
-        HttpRequester requester = bootstrap.getRequester();
+        HttpRequester requester = getRequester();
         UserAdapter adapter;
         HttpResponse<UserData> response = requester.get(getUrl() + "/" + uuid.toString(), UserData.class);
         if(!response.isSuccess()) {
@@ -126,7 +145,7 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
         if(users.containsKey(uuid)) {
             return true;
         }
-        HttpRequester requester = bootstrap.getRequester();
+        HttpRequester requester = getRequester();
         HttpResponse<UserData> response = requester.get(getUrl() + "/" + uuid.toString(), UserData.class);
         return response.isSuccess();
     }

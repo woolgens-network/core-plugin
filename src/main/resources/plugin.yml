@@ -1,5 +1,6 @@
 name: Woolgens-Core
 author: Maga
 version: 1.0.0
+api-version: 1.16
 description: Core of all minecraft plugins
 main: net.woolgens.core.spigot.SpigotCore

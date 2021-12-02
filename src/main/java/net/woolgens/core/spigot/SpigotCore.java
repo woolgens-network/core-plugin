@@ -4,11 +4,14 @@ import lombok.Getter;
 import net.woolgens.api.WoolgensConstants;
 import net.woolgens.core.root.CoreRootBootstrap;
 import net.woolgens.core.root.ServerScope;
+import net.woolgens.core.spigot.command.TestCommand;
 import net.woolgens.core.spigot.listener.PlayerLoginListener;
 import net.woolgens.core.spigot.listener.PlayerQuitListener;
 import net.woolgens.library.spigot.command.exception.CommandExceptionMapper;
 import net.woolgens.library.spigot.command.exception.impl.NoPermissionException;
 import net.woolgens.library.spigot.command.exception.impl.SenderException;
+import net.woolgens.library.spigot.gui.listener.GUIInventoryClickListener;
+import net.woolgens.library.spigot.gui.listener.GUIInventoryCloseListener;
 import net.woolgens.library.spigot.setup.SpigotSetup;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -62,12 +65,15 @@ public class SpigotCore extends JavaPlugin {
         /**
          * Commands
          */
+        setup.addCommand(new TestCommand());
 
         /**
          * Listeners
          */
         setup.addListener(new PlayerLoginListener());
         setup.addListener(new PlayerQuitListener());
+        setup.addListener(new GUIInventoryClickListener());
+        setup.addListener(new GUIInventoryCloseListener());
 
         //------------------------------------------------
         setup.register();

@@ -75,7 +75,7 @@
         <dependency>
             <groupId>net.woolgens</groupId>
             <artifactId>api</artifactId>
-            <version>1.1.4</version>
+            <version>1.1.5</version>
             <scope>compile</scope>
         </dependency>
 
@@ -83,13 +83,6 @@
             <groupId>net.woolgens.library</groupId>
             <artifactId>all</artifactId>
             <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.bettercloud</groupId>
-            <artifactId>vault-java-driver</artifactId>
-            <version>5.1.0</version>
             <scope>compile</scope>
         </dependency>
 

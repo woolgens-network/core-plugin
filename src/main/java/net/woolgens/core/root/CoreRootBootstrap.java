@@ -5,11 +5,9 @@ import net.woolgens.api.WoolgensApi;
 import net.woolgens.api.user.UserProvider;
 import net.woolgens.api.vault.VaultProvider;
 import net.woolgens.core.root.config.ConfigFacade;
-import net.woolgens.core.root.http.RootExceptionMapper;
 import net.woolgens.core.root.user.UserProviderAdapter;
-import net.woolgens.core.root.vault.HashiCorpVaultAdapter;
-import net.woolgens.library.common.http.HttpRequester;
-import net.woolgens.library.common.http.OkHttpRequester;
+import net.woolgens.core.root.vault.VaultAdapter;
+import net.woolgens.library.common.exception.ExceptionMapper;
 import net.woolgens.library.common.logger.WrappedLogger;
 import net.woolgens.library.common.logger.adapter.DefaultLoggerAdapter;
 
@@ -28,24 +26,33 @@ public class CoreRootBootstrap {
     private ServerScope scope;
     private WrappedLogger logger;
     private ConfigFacade configuration;
-    private HttpRequester requester;
+    private VaultAdapter vaultProvider;
+
     private UserProviderAdapter userProvider;
-    private HashiCorpVaultAdapter vaultProvider;
+
+    private ExceptionMapper<Exception> defaultExceptionMapper;
 
     public CoreRootBootstrap(ServerScope scope, String defaultDirectory) {
         bootstrap = this;
         //--------------------------------------------------------------
         this.scope = scope;
         this.logger = new DefaultLoggerAdapter();
+
+        this.defaultExceptionMapper = exception -> {
+            logger.severe("Error: " + exception.getMessage());
+        };
+
         this.configuration = new ConfigFacade(defaultDirectory);
-        this.requester = new OkHttpRequester(configuration.getGateway().getUrl());
-        this.requester.setMapper(new RootExceptionMapper(this));
+        this.vaultProvider = new VaultAdapter(this);
+        this.userProvider = new UserProviderAdapter(this);
+
         registerProviders();
+
     }
 
     private void registerProviders() {
-        WoolgensApi.registerProvider(UserProvider.class, userProvider = new UserProviderAdapter(this));
-        WoolgensApi.registerProvider(VaultProvider.class, vaultProvider = new HashiCorpVaultAdapter(this));
+        WoolgensApi.registerProvider(UserProvider.class, userProvider);
+        WoolgensApi.registerProvider(VaultProvider.class, vaultProvider);
 
     }
 

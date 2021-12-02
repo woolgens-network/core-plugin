@@ -16,14 +16,15 @@ public class ConfigFacade {
     private final String defaultDirectory;
     private final String configDirectory;
 
-    private GatewayConfig gateway;
+    private BackendConfig backend;
     private VaultConfig vault;
+
 
     public ConfigFacade(String defaultDirectory) {
         this.defaultDirectory = defaultDirectory;
         this.configDirectory = defaultDirectory + "config" + File.separator;
 
-        this.gateway = new GatewayConfig(configDirectory);
+        this.backend = new BackendConfig(configDirectory);
         this.vault = new VaultConfig(configDirectory);
     }
 

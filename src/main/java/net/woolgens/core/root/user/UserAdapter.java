@@ -18,4 +18,5 @@ public class UserAdapter implements User {
     private UserData data;
 
 
+
 }

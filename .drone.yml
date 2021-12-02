@@ -21,3 +21,27 @@ steps:
     depends_on: [settings]
     commands:
       - mvn -U test -s settings.xml
+---
+kind: pipeline
+type: docker
+name: Java Maven Deploy
+
+trigger:
+  branch:
+    - master
+  event:
+    - push
+
+steps:
+  - name: settings
+    image: md5lukas/drone-mvn-settings
+    settings:
+      servers:
+        - id: woolgens-network
+          username: woolgens-default
+      serverSecrets:
+        from_secret: MAVEN_SERVER_SECRETS
+  - name: deploy
+    image: maven
+    commands:
+      - mvn deploy -B -s settings.xml
