@@ -4,10 +4,9 @@ import lombok.Getter;
 import net.woolgens.api.WoolgensConstants;
 import net.woolgens.core.root.CoreRootBootstrap;
 import net.woolgens.core.root.ServerScope;
-import net.woolgens.core.spigot.command.TestCommand;
 import net.woolgens.core.spigot.listener.PlayerLoginListener;
 import net.woolgens.core.spigot.listener.PlayerQuitListener;
-import net.woolgens.library.spigot.command.exception.CommandExceptionMapper;
+import net.woolgens.library.spigot.command.CommandNode;
 import net.woolgens.library.spigot.command.exception.impl.NoPermissionException;
 import net.woolgens.library.spigot.command.exception.impl.SenderException;
 import net.woolgens.library.spigot.gui.listener.GUIInventoryClickListener;
@@ -31,8 +30,6 @@ public class SpigotCore extends JavaPlugin {
 
     private CoreRootBootstrap root;
 
-    private CommandExceptionMapper commandExceptionMapper;
-
     @Override
     public void onLoad() {
         instance = this;
@@ -51,7 +48,7 @@ public class SpigotCore extends JavaPlugin {
     }
 
     private void setupCommandExceptionMapper() {
-        commandExceptionMapper = exception -> {
+        CommandNode.DEFAULT_EXCEPTION_MAPPER =exception -> {
             if(exception instanceof SenderException) {
 
             } else if(exception instanceof NoPermissionException noPermissionException) {
@@ -65,7 +62,6 @@ public class SpigotCore extends JavaPlugin {
         /**
          * Commands
          */
-        setup.addCommand(new TestCommand());
 
         /**
          * Listeners
