@@ -2,8 +2,10 @@ package net.woolgens.core.spigot.listener;
 
 import net.woolgens.api.WoolgensApi;
 import net.woolgens.api.user.User;
+import net.woolgens.api.user.UserCacheProvider;
 import net.woolgens.api.user.UserProvider;
 import net.woolgens.core.root.user.UserProviderAdapter;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -35,10 +37,15 @@ public class PlayerLoginListener implements Listener {
 
     @EventHandler
     public void onSync(PlayerLoginEvent event) {
+        Player player = event.getPlayer();
+
         UserProviderAdapter provider = WoolgensApi.getProvider(UserProvider.class);
-        if(!provider.getUsers().containsKey(event.getPlayer().getUniqueId())) {
+        if(!provider.getUsers().containsKey(player.getUniqueId())) {
             event.disallow(PlayerLoginEvent.Result.KICK_OTHER, MESSAGE);
+            return;
         }
+        UserCacheProvider cacheProvider = WoolgensApi.getProvider(UserCacheProvider.class);
+        cacheProvider.put(player.getUniqueId().toString(), player.getName());
     }
 
 

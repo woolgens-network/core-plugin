@@ -6,11 +6,15 @@ import net.woolgens.core.root.CoreRootBootstrap;
 import net.woolgens.core.root.ServerScope;
 import net.woolgens.core.spigot.listener.PlayerLoginListener;
 import net.woolgens.core.spigot.listener.PlayerQuitListener;
+import net.woolgens.core.spigot.location.FileLocationAdapter;
+import net.woolgens.core.spigot.location.LocationProvider;
+import net.woolgens.library.database.redis.RedisContext;
 import net.woolgens.library.spigot.command.CommandNode;
 import net.woolgens.library.spigot.command.exception.impl.NoPermissionException;
 import net.woolgens.library.spigot.command.exception.impl.SenderException;
 import net.woolgens.library.spigot.gui.listener.GUIInventoryClickListener;
 import net.woolgens.library.spigot.gui.listener.GUIInventoryCloseListener;
+import net.woolgens.library.spigot.npc.NPCProcessor;
 import net.woolgens.library.spigot.setup.SpigotSetup;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,6 +33,8 @@ public class SpigotCore extends JavaPlugin {
     private static SpigotCore instance;
 
     private CoreRootBootstrap root;
+    private LocationProvider locationProvider;
+
 
     @Override
     public void onLoad() {
@@ -40,11 +46,19 @@ public class SpigotCore extends JavaPlugin {
         initialize();
     }
 
+    @Override
+    public void onDisable() {
+        NPCProcessor.disable();
+    }
+
     private void initialize() {
         this.root = new CoreRootBootstrap(ServerScope.SPIGOT, "plugins" + File.separator + getDescription().getName() +
                 File.separator);
+        this.locationProvider = new FileLocationAdapter(root.getDefaultDirectory());
+
         setupCommandExceptionMapper();
         setup();
+        NPCProcessor.start(this);
     }
 
     private void setupCommandExceptionMapper() {
