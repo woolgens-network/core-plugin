@@ -80,6 +80,7 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
         UserData data = new UserData();
         data.setUuid(uuid.toString());
         data.setName("");
+        data.setLand("");
         data.setJoined(System.currentTimeMillis());
         data.setStats(new HashMap<>());
         data.setSettings(new HashMap<>());

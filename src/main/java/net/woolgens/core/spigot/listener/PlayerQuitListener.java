@@ -5,6 +5,7 @@ import net.woolgens.api.user.User;
 import net.woolgens.api.user.UserProvider;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -19,10 +20,12 @@ import java.util.function.Consumer;
  **/
 public class PlayerQuitListener implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onCall(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         UserProvider<User> provider = WoolgensApi.getProvider(UserProvider.class);
-        provider.unload(player.getUniqueId());
+        provider.saveAsync(provider.getUserByUUID(player.getUniqueId()), false)
+                .thenAccept(user -> provider.unload(player.getUniqueId()));
+
     }
 }

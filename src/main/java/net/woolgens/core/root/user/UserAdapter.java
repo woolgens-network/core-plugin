@@ -9,9 +9,16 @@ import net.woolgens.api.user.User;
 import net.woolgens.api.user.UserProvider;
 import net.woolgens.api.user.data.SeasonData;
 import net.woolgens.api.user.data.UserData;
+import net.woolgens.api.user.data.UserSettings;
+import net.woolgens.core.root.CoreRootBootstrap;
+import net.woolgens.core.root.ServerScope;
+import net.woolgens.core.spigot.event.UserLevelUpEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Copyright (c) Maga, All Rights Reserved
@@ -31,6 +38,25 @@ public class UserAdapter implements User {
     }
 
     @Override
+    public void setSetting(UserSettings settings, Object value) {
+        this.data.getSettings().put(settings.name().toLowerCase(), value);
+    }
+
+    @Override
+    public <T> T getSetting(UserSettings settings) {
+        String lowered = settings.name().toLowerCase();
+        if(!data.getSettings().containsKey(lowered)) {
+            data.getSettings().put(lowered, settings.getDefaultValue());
+        }
+        return (T) this.data.getSettings().get(lowered);
+    }
+
+    @Override
+    public boolean isSetting(UserSettings settings) {
+        return getSetting(settings);
+    }
+
+    @Override
     public SeasonData getSeasonData() {
 
         if(!data.getSeasons().containsKey(WoolgensConstants.CURRENT_SEASON)) {
@@ -46,6 +72,74 @@ public class UserAdapter implements User {
             provider.saveAsync(this, true);
         }
         return data.getSeasons().get(WoolgensConstants.CURRENT_SEASON);
+    }
+
+    @Override
+    public void addExp(long exp) {
+        SeasonData data = getSeasonData();
+
+        long expToNextLevel = getExpToNextLevel();
+        long nextExp = data.getExp() + exp;
+        int nextLevel = data.getLevel();
+
+        while (nextExp >= expToNextLevel) {
+            nextExp = nextExp - expToNextLevel;
+            nextLevel++;
+            expToNextLevel = getExpToNextLevel(nextLevel);
+        }
+
+        Player player = getPlayer();
+        if(nextLevel > data.getLevel()) {
+            if(CoreRootBootstrap.getBootstrap().getScope() == ServerScope.SPIGOT) {
+                Bukkit.getPluginManager().callEvent(new UserLevelUpEvent(player, this, data.getLevel(), nextLevel));
+            }
+        }
+        data.setLevel(nextLevel);
+        data.setExp(nextExp);
+
+        UserProvider<User> provider = WoolgensApi.getProvider(UserProvider.class);
+        provider.saveAsync(this, true);
+    }
+
+    @Override
+    public String getColoredLevel() {
+        int level = getSeasonData().getLevel();
+        String color = "§a";
+        if(level >= 30 && level <= 59) {
+            color = "§e";
+        } else if(level >= 60 && level <= 89) {
+            color = "§6";
+        } else if(level >= 100) {
+            color = "§4";
+        }
+        return color + level;
+    }
+
+    public Player getPlayer() {
+        return Bukkit.getPlayer(UUID.fromString(getData().getUuid()));
+    }
+
+    public long getExpToNextLevel(int level) {
+        return Math.round(100 * (Math.pow(1.10, level)));
+    }
+
+    @Override
+    public long getExpToNextLevel() {
+        int level = getSeasonData().getLevel();
+        return getExpToNextLevel(level);
+    }
+
+    @Override
+    public boolean wait(String key, long millis) {
+        if (!containsTag(key)) {
+            setTag(key, Long.valueOf(0));
+        }
+        long value = getTag(key);
+        if (System.currentTimeMillis() > value) {
+            setTag(key, System.currentTimeMillis() + millis);
+            return true;
+        }
+        return false;
     }
 
     @Override

@@ -1,7 +1,10 @@
 package net.woolgens.core.spigot;
 
 import lombok.Getter;
+import net.woolgens.api.WoolgensApi;
 import net.woolgens.api.WoolgensConstants;
+import net.woolgens.api.user.User;
+import net.woolgens.api.user.UserProvider;
 import net.woolgens.core.root.CoreRootBootstrap;
 import net.woolgens.core.root.ServerScope;
 import net.woolgens.core.spigot.listener.PlayerLoginListener;
@@ -16,6 +19,8 @@ import net.woolgens.library.spigot.gui.listener.GUIInventoryClickListener;
 import net.woolgens.library.spigot.gui.listener.GUIInventoryCloseListener;
 import net.woolgens.library.spigot.npc.NPCProcessor;
 import net.woolgens.library.spigot.setup.SpigotSetup;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -48,6 +53,11 @@ public class SpigotCore extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        UserProvider<User> provider = WoolgensApi.getProvider(UserProvider.class);
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            User user = provider.getUserByUUID(player.getUniqueId());
+            provider.save(user);
+        }
         NPCProcessor.disable();
     }
 
@@ -62,10 +72,10 @@ public class SpigotCore extends JavaPlugin {
     }
 
     private void setupCommandExceptionMapper() {
-        CommandNode.DEFAULT_EXCEPTION_MAPPER =exception -> {
-            if(exception instanceof SenderException) {
+        CommandNode.DEFAULT_EXCEPTION_MAPPER = exception -> {
+            if (exception instanceof SenderException) {
 
-            } else if(exception instanceof NoPermissionException noPermissionException) {
+            } else if (exception instanceof NoPermissionException noPermissionException) {
                 noPermissionException.getSender().sendMessage(WoolgensConstants.PREFIX + "§cYou do not have enough permissions.");
             }
         };

@@ -17,9 +17,18 @@ public class BackendConfig extends YamlConfig {
     @Override
     public void writeDefaults() {
         set("user", "http://127.0.0.1:8080/");
+        set("crate", "http://127.0.0.1:8080/");
     }
 
     public String getUser() {
         return getGeneric("user");
+    }
+
+    public String getCrate() {
+        if(!contains("crate")) {
+            set("crate", "http://127.0.0.1:8080/");
+            save();
+        }
+        return getGeneric("crate");
     }
 }
