@@ -18,6 +18,7 @@ import net.woolgens.library.spigot.command.exception.impl.SenderException;
 import net.woolgens.library.spigot.gui.listener.GUIInventoryClickListener;
 import net.woolgens.library.spigot.gui.listener.GUIInventoryCloseListener;
 import net.woolgens.library.spigot.npc.NPCProcessor;
+import net.woolgens.library.spigot.packet.PacketReaderWrapper;
 import net.woolgens.library.spigot.setup.SpigotSetup;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -39,6 +40,7 @@ public class SpigotCore extends JavaPlugin {
 
     private CoreRootBootstrap root;
     private LocationProvider locationProvider;
+    private PacketReaderWrapper packetReaderWrapper;
 
 
     @Override
@@ -59,12 +61,14 @@ public class SpigotCore extends JavaPlugin {
             provider.save(user);
         }
         NPCProcessor.disable();
+        packetReaderWrapper.disable();
     }
 
     private void initialize() {
         this.root = new CoreRootBootstrap(ServerScope.SPIGOT, "plugins" + File.separator + getDescription().getName() +
                 File.separator);
         this.locationProvider = new FileLocationAdapter(root.getDefaultDirectory());
+        this.packetReaderWrapper = new PacketReaderWrapper(this);
 
         setupCommandExceptionMapper();
         setup();

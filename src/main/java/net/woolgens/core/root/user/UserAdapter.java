@@ -120,7 +120,7 @@ public class UserAdapter implements User {
     }
 
     public long getExpToNextLevel(int level) {
-        return Math.round(100 * (Math.pow(1.10, level)));
+        return Math.round(100 * (Math.pow(1.12, level)));
     }
 
     @Override
