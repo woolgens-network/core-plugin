@@ -8,6 +8,7 @@ import net.woolgens.api.WoolgensConstants;
 import net.woolgens.api.user.User;
 import net.woolgens.api.user.UserProvider;
 import net.woolgens.api.user.data.SeasonData;
+import net.woolgens.api.user.data.SeasonQuestData;
 import net.woolgens.api.user.data.UserData;
 import net.woolgens.api.user.data.UserSettings;
 import net.woolgens.core.root.CoreRootBootstrap;
@@ -17,6 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
@@ -65,6 +67,12 @@ public class UserAdapter implements User {
             seasonData.setStats(new HashMap<>());
             seasonData.setCrates(new HashMap<>());
             seasonData.setLevel(1);
+
+            SeasonQuestData questData = new SeasonQuestData();
+            questData.setSelected(new HashMap<>());
+            questData.setFinished(new HashSet<>());
+
+            seasonData.setQuests(questData);
             //-----------------------------------------------------
 
             data.getSeasons().put(WoolgensConstants.CURRENT_SEASON, seasonData);
