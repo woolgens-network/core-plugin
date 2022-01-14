@@ -64,6 +64,7 @@ public class UserAdapter implements User {
             SeasonData seasonData = new SeasonData();
             seasonData.setStats(new HashMap<>());
             seasonData.setCrates(new HashMap<>());
+            seasonData.setExtensions(new HashMap<>());
             seasonData.setLevel(1);
 
             SeasonQuestData questData = new SeasonQuestData();
