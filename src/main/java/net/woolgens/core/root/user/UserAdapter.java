@@ -1,7 +1,5 @@
 package net.woolgens.core.root.user;
 
-import com.google.gson.Gson;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.woolgens.api.WoolgensApi;
 import net.woolgens.api.WoolgensConstants;
@@ -10,6 +8,7 @@ import net.woolgens.api.user.UserProvider;
 import net.woolgens.api.user.data.SeasonData;
 import net.woolgens.api.user.data.UserData;
 import net.woolgens.api.user.data.UserSettings;
+import net.woolgens.api.user.data.quest.SeasonQuestData;
 import net.woolgens.core.root.CoreRootBootstrap;
 import net.woolgens.core.root.ServerScope;
 import net.woolgens.core.spigot.event.UserLevelUpEvent;
@@ -17,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
@@ -64,7 +64,14 @@ public class UserAdapter implements User {
             SeasonData seasonData = new SeasonData();
             seasonData.setStats(new HashMap<>());
             seasonData.setCrates(new HashMap<>());
+            seasonData.setExtensions(new HashMap<>());
             seasonData.setLevel(1);
+
+            SeasonQuestData questData = new SeasonQuestData();
+            questData.setSelected(new HashMap<>());
+            questData.setFinished(new HashMap<>());
+
+            seasonData.setQuests(questData);
             //-----------------------------------------------------
 
             data.getSeasons().put(WoolgensConstants.CURRENT_SEASON, seasonData);

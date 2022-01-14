@@ -85,6 +85,7 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
         data.setStats(new HashMap<>());
         data.setSettings(new HashMap<>());
         data.setSeasons(new HashMap<>());
+        data.setExtensions(new HashMap<>());
         //-----------------------------------------------------
 
         HttpRequester requester = getRequester();
