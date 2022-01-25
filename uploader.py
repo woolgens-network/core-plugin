@@ -5,7 +5,7 @@ import requests
 #--------------------------------------------------
 
 url = "http://167.114.103.227:8517/"
-token = "rxkJYyq2gWNFSAbEH4Ax7c5pg4ADnJrrd7gU5gwBNb5EqA57zVqDV8cfLhwSyXMF"
+token = "98h7kFwfJ76G9wC2m6ZwkGtQWpdfs5Yn3s5xGBKvdEnq3DJVdUGZreJzEnNeF2TG"
 
 path = sys.argv[1]
 file_name = sys.argv[2]

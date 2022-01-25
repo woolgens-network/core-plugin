@@ -9,6 +9,7 @@ import net.woolgens.api.user.data.SeasonData;
 import net.woolgens.api.user.data.UserData;
 import net.woolgens.api.user.data.UserSettings;
 import net.woolgens.api.user.data.quest.SeasonQuestData;
+import net.woolgens.api.user.data.skills.Skills;
 import net.woolgens.core.root.CoreRootBootstrap;
 import net.woolgens.core.root.ServerScope;
 import net.woolgens.core.spigot.event.UserLevelUpEvent;
@@ -39,7 +40,7 @@ public class UserAdapter implements User {
 
     @Override
     public void setSetting(UserSettings settings, Object value) {
-        this.data.getSettings().put(settings.name().toLowerCase(), value);
+        setSetting(settings.name().toLowerCase(), value);
     }
 
     @Override
@@ -57,6 +58,22 @@ public class UserAdapter implements User {
     }
 
     @Override
+    public void setSetting(String setting, Object value) {
+        this.data.getSettings().put(setting.toLowerCase(), value);
+    }
+
+    @Override
+    public <T> T getSetting(String settings) {
+        String lowered = settings.toLowerCase();
+        return (T) this.data.getSettings().get(lowered);
+    }
+
+    @Override
+    public boolean isSetting(String settings) {
+        return getSetting(settings);
+    }
+
+    @Override
     public SeasonData getSeasonData() {
 
         if(!data.getSeasons().containsKey(WoolgensConstants.CURRENT_SEASON)) {
@@ -70,6 +87,12 @@ public class UserAdapter implements User {
             SeasonQuestData questData = new SeasonQuestData();
             questData.setSelected(new HashMap<>());
             questData.setFinished(new HashMap<>());
+
+            Skills skills = new Skills();
+            skills.setFarming(new HashMap<>());
+            skills.setBase(new HashMap<>());
+
+            seasonData.setSkills(skills);
 
             seasonData.setQuests(questData);
             //-----------------------------------------------------
