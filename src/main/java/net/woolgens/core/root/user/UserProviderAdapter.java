@@ -84,6 +84,7 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
         data.setJoined(System.currentTimeMillis());
         data.setStats(new HashMap<>());
         data.setSettings(new HashMap<>());
+        data.setBooster(new HashMap<>());
         data.setSeasons(new HashMap<>());
         data.setExtensions(new HashMap<>());
         //-----------------------------------------------------
