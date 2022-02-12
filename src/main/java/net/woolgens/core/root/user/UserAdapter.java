@@ -83,17 +83,14 @@ public class UserAdapter implements User {
             seasonData.setCrates(new HashMap<>());
             seasonData.setExtensions(new HashMap<>());
             seasonData.setTimestamps(new HashMap<>());
+            seasonData.setHomes(new HashMap<>());
+
             seasonData.setLevel(1);
 
             SeasonQuestData questData = new SeasonQuestData();
             questData.setSelected(new HashMap<>());
             questData.setFinished(new HashMap<>());
 
-            Skills skills = new Skills();
-            skills.setFarming(new HashMap<>());
-            skills.setBase(new HashMap<>());
-
-            seasonData.setSkills(skills);
 
             seasonData.setQuests(questData);
             //-----------------------------------------------------
