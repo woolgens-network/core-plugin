@@ -16,10 +16,7 @@ import net.woolgens.core.spigot.event.UserLevelUpEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Copyright (c) Maga, All Rights Reserved
@@ -83,7 +80,7 @@ public class UserAdapter implements User {
             seasonData.setCrates(new HashMap<>());
             seasonData.setExtensions(new HashMap<>());
             seasonData.setTimestamps(new HashMap<>());
-            seasonData.setHomes(new HashMap<>());
+            seasonData.setHomes(new LinkedHashMap<>());
 
             seasonData.setLevel(1);
 
