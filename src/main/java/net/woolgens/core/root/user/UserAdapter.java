@@ -82,6 +82,7 @@ public class UserAdapter implements User {
             seasonData.setStats(new HashMap<>());
             seasonData.setCrates(new HashMap<>());
             seasonData.setExtensions(new HashMap<>());
+            seasonData.setTimestamps(new HashMap<>());
             seasonData.setLevel(1);
 
             SeasonQuestData questData = new SeasonQuestData();
@@ -150,7 +151,7 @@ public class UserAdapter implements User {
     }
 
     public long getExpToNextLevel(int level) {
-        return Math.round(100 * (Math.pow(1.12, level)));
+        return Math.round(100 * (Math.pow(1.132, level)));
     }
 
     @Override
@@ -190,5 +191,46 @@ public class UserAdapter implements User {
     @Override
     public boolean containsTag(String key) {
         return tags.containsKey(key.toLowerCase());
+    }
+
+    @Override
+    public boolean isTimestampAvailable(String key) {
+        SeasonData data = getSeasonData();
+        if(data.getTimestamps() == null) {
+            data.setTimestamps(new HashMap<>());
+        }
+
+        final String lowered = key.toLowerCase();
+        if(!data.getTimestamps().containsKey(lowered)) {
+            return true;
+        }
+        long until = data.getTimestamps().get(lowered);
+        if(System.currentTimeMillis() > until) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public long getTimestamp(String key) {
+        SeasonData data = getSeasonData();
+        if(data.getTimestamps() == null) {
+            data.setTimestamps(new HashMap<>());
+        }
+
+        final String lowered = key.toLowerCase();
+        if(!data.getTimestamps().containsKey(lowered)) {
+            return 0;
+        }
+        return data.getTimestamps().get(lowered);
+    }
+
+    @Override
+    public void setTimestamp(String key, long timestamp) {
+        SeasonData data = getSeasonData();
+        if(data.getTimestamps() == null) {
+            data.setTimestamps(new HashMap<>());
+        }
+        data.getTimestamps().put(key.toLowerCase(), timestamp);
     }
 }
