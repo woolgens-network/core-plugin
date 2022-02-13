@@ -5,11 +5,17 @@ import net.woolgens.api.WoolgensApi;
 import net.woolgens.api.user.UserCacheProvider;
 import net.woolgens.api.user.UserProvider;
 import net.woolgens.api.vault.VaultProvider;
+import net.woolgens.api.web.WebGroupProvider;
+import net.woolgens.api.web.WebTemporaryTokenProvider;
+import net.woolgens.api.web.WebUserProvider;
 import net.woolgens.core.root.config.ConfigFacade;
 import net.woolgens.core.root.database.RedisContextWrapper;
 import net.woolgens.core.root.user.UserProviderAdapter;
 import net.woolgens.core.root.user.cache.RedisUserCacheAdapter;
 import net.woolgens.core.root.vault.VaultAdapter;
+import net.woolgens.core.root.web.WebGroupAdapter;
+import net.woolgens.core.root.web.WebTemporaryTokenAdapter;
+import net.woolgens.core.root.web.WebUserAdapter;
 import net.woolgens.library.common.exception.ExceptionMapper;
 import net.woolgens.library.common.logger.WrappedLogger;
 import net.woolgens.library.common.logger.adapter.DefaultLoggerAdapter;
@@ -58,6 +64,9 @@ public class CoreRootBootstrap {
         WoolgensApi.registerProvider(UserProvider.class, userProvider);
         WoolgensApi.registerProvider(VaultProvider.class, vaultProvider);
         WoolgensApi.registerProvider(UserCacheProvider.class, new RedisUserCacheAdapter(this));
+        WoolgensApi.registerProvider(WebUserProvider.class, new WebUserAdapter(this));
+        WoolgensApi.registerProvider(WebGroupProvider.class, new WebGroupAdapter(this));
+        WoolgensApi.registerProvider(WebTemporaryTokenProvider.class, new WebTemporaryTokenAdapter(this));
 
     }
 
