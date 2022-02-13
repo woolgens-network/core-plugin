@@ -5,12 +5,14 @@ import net.woolgens.api.WoolgensApi;
 import net.woolgens.api.WoolgensConstants;
 import net.woolgens.api.user.User;
 import net.woolgens.api.user.UserProvider;
+import net.woolgens.api.user.settings.UserSettingsRegistry;
 import net.woolgens.core.root.CoreRootBootstrap;
 import net.woolgens.core.root.ServerScope;
 import net.woolgens.core.spigot.listener.PlayerLoginListener;
 import net.woolgens.core.spigot.listener.PlayerQuitListener;
 import net.woolgens.core.spigot.location.FileLocationAdapter;
 import net.woolgens.core.spigot.location.LocationProvider;
+import net.woolgens.core.spigot.user.UserSettingsAdapter;
 import net.woolgens.library.database.redis.RedisContext;
 import net.woolgens.library.spigot.command.CommandNode;
 import net.woolgens.library.spigot.command.exception.impl.NoPermissionException;
@@ -70,9 +72,14 @@ public class SpigotCore extends JavaPlugin {
         this.locationProvider = new FileLocationAdapter(root.getDefaultDirectory());
         this.packetReaderWrapper = new PacketReaderWrapper(this);
 
+        setupProviders();
         setupCommandExceptionMapper();
         setup();
         NPCProcessor.start(this);
+    }
+
+    private void setupProviders() {
+        WoolgensApi.registerProvider(UserSettingsRegistry.class, new UserSettingsAdapter());
     }
 
     private void setupCommandExceptionMapper() {
