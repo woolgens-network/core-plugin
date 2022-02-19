@@ -14,6 +14,7 @@ import net.woolgens.library.common.logger.adapter.NamedLoggerAdapter;
 import net.woolgens.library.common.queue.QueueOperation;
 import net.woolgens.library.common.queue.QueueOperationPool;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -87,6 +88,7 @@ public class UserProviderAdapter implements UserProvider<UserAdapter> {
         data.setBooster(new HashMap<>());
         data.setSeasons(new HashMap<>());
         data.setExtensions(new HashMap<>());
+        data.setBadges(new ArrayList<>());
         //-----------------------------------------------------
 
         HttpRequester requester = getRequester();

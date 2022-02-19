@@ -5,6 +5,7 @@ import net.woolgens.api.WoolgensApi;
 import net.woolgens.api.WoolgensConstants;
 import net.woolgens.api.user.User;
 import net.woolgens.api.user.UserProvider;
+import net.woolgens.api.user.data.Badge;
 import net.woolgens.api.user.data.SeasonData;
 import net.woolgens.api.user.data.UserData;
 import net.woolgens.api.user.data.UserSettings;
@@ -226,5 +227,36 @@ public class UserAdapter implements User {
             data.setTimestamps(new HashMap<>());
         }
         data.getTimestamps().put(key.toLowerCase(), timestamp);
+    }
+
+    @Override
+    public void addBadge(Badge badge) {
+        if(data.getBadges() == null) {
+            data.setBadges(new ArrayList<>());
+        }
+        data.getBadges().add(badge);
+    }
+
+    @Override
+    public void removeBadge(Badge badge) {
+        if(data.getBadges() == null) {
+            data.setBadges(new ArrayList<>());
+        }
+        data.getBadges().remove(badge);
+    }
+
+    @Override
+    public boolean hasBadge(String title) {
+        return getBadgeByTitle(title) != null;
+    }
+
+    @Override
+    public Badge getBadgeByTitle(String title) {
+        for(Badge badge : data.getBadges()) {
+            if(badge.getTitle().equalsIgnoreCase(title)) {
+                return badge;
+            }
+        }
+        return null;
     }
 }
