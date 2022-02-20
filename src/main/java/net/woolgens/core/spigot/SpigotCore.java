@@ -8,6 +8,7 @@ import net.woolgens.api.user.UserProvider;
 import net.woolgens.api.user.settings.UserSettingsRegistry;
 import net.woolgens.core.root.CoreRootBootstrap;
 import net.woolgens.core.root.ServerScope;
+import net.woolgens.core.spigot.listener.PlayerJoinListener;
 import net.woolgens.core.spigot.listener.PlayerLoginListener;
 import net.woolgens.core.spigot.listener.PlayerQuitListener;
 import net.woolgens.core.spigot.location.FileLocationAdapter;
@@ -102,6 +103,7 @@ public class SpigotCore extends JavaPlugin {
          * Listeners
          */
         setup.addListener(new PlayerLoginListener());
+        setup.addListener(new PlayerJoinListener());
         setup.addListener(new PlayerQuitListener());
         setup.addListener(new GUIInventoryClickListener());
         setup.addListener(new GUIInventoryCloseListener());

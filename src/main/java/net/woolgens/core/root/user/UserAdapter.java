@@ -252,6 +252,9 @@ public class UserAdapter implements User {
 
     @Override
     public Badge getBadgeByTitle(String title) {
+        if(data.getBadges() == null) {
+            return null;
+        }
         for(Badge badge : data.getBadges()) {
             if(badge.getTitle().equalsIgnoreCase(title)) {
                 return badge;
